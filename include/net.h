@@ -15,6 +15,9 @@ namespace net {
 static const int MAX_NETS = 8;
 struct Saved { char ssid[33]; char pass[65]; };
 
+void bootStage(const char *step);  // start-up trace (main.cpp)
+void disable();                    // safe mode: do not touch the Wi-Fi chip this start
+bool isDisabled();
 void begin(bool hotspot);         // loads saved networks, starts hotspot + STA
 void loop();                      // call often from loop()
 void hotspot(bool on);            // the S3 board keeps it on

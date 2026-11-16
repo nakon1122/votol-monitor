@@ -68,7 +68,9 @@ static void load() {
   }
 }
 
+static bool disabled = false;  // start-up safe mode: the Wi-Fi chip is left alone
 static void applyMode() {
+  if (disabled) return;
   wifi_mode_t m = apOn ? (n ? WIFI_AP_STA : WIFI_AP) : (n ? WIFI_STA : WIFI_OFF);
   if (scanRun && m == WIFI_AP) m = WIFI_AP_STA;
   if (WiFi.getMode() != m) WiFi.mode(m);
@@ -80,6 +82,7 @@ static void applyMode() {
 }
 
 void hotspot(bool on) {
+  if (disabled) return;
   if (on == apOn && (!on || WiFi.getMode() & WIFI_AP)) return;
   apOn = on;
   applyMode();
@@ -96,6 +99,7 @@ void hotspot(bool on) {
 }
 
 static void startTry(int i) {
+  if (disabled) return;
   if (i < 0 || i >= n) return;
   tryIdx = i;
   tryStart = lastTry = millis();
@@ -105,16 +109,23 @@ static void startTry(int i) {
   WiFi.setTxPower(WIFI_POWER_19_5dBm);
 }
 
+void disable() { disabled = true; }
+bool isDisabled() { return disabled; }
 void begin(bool hs) {
+  if (disabled) return;
+  bootStage("wifi config");
   WiFi.persistent(false);       // we keep the networks ourselves
   WiFi.setAutoReconnect(false); // no background reconnect storms
   load();
+  bootStage(hs ? "wifi hotspot on" : "wifi mode");
   hotspot(hs);
   applyMode();
+  bootStage("wifi join");
   if (n) startTry(0);
 }
 
 void loop() {
+  if (disabled) return;
   uint32_t now = millis();
   bool on = WiFi.status() == WL_CONNECTED;
   if (on) {
@@ -158,7 +169,7 @@ void loop() {
 bool hotspotOn() { return apOn; }
 uint32_t dropCount() { return drops; }
 const char *apSsid() { return apOn ? apName : "off"; }
-int apClients() { return apOn ? WiFi.softAPgetStationNum() : 0; }
+int apClients() { return apOn && !disabled ? WiFi.softAPgetStationNum() : 0; }
 int count() { return n; }
 const Saved &saved(int i) { return nets[i]; }
 
@@ -187,11 +198,12 @@ bool remove(const char *s) {
 }
 void btCoex(bool on) {
   btOn = on;
+  if (disabled) return;
   if (WiFi.getMode() != WIFI_OFF) WiFi.setSleep(on);
 }
 void reconnectNow() { if (n) startTry(0); }
 
-bool online() { return WiFi.status() == WL_CONNECTED; }
+bool online() { return !disabled && WiFi.status() == WL_CONNECTED; }
 const char *ssid() { return online() ? curSsid : ""; }
 const char *ip() { return online() ? curIp : ""; }
 int rssi() { return online() ? curRssi : 0; }
@@ -210,6 +222,7 @@ static void onScanDone(arduino_event_id_t, arduino_event_info_t info) {
   scanRun = false;
 }
 void scanStart() {
+  if (disabled) return;
   if (scanBusy()) return;
   if (!evHooked) { WiFi.onEvent(onScanDone, ARDUINO_EVENT_WIFI_SCAN_DONE); evHooked = true; }
   // a scan needs the station interface, and the driver refuses to scan while

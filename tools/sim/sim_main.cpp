@@ -228,6 +228,14 @@ int main(int argc, char **argv) {
     ui::page = PG_DASH; ui::menuOpen = true; s.cloudCfg = false; s.updAvailable = true; shot("42_menu_alerts"); ui::menuOpen = false; s.updAvailable = false;
     s.cloudCfg = true;
   }
+  {  // boot screen after a crash during start-up
+    ui::page = PG_BOOT;
+    strcpy(s.bootNote, i18n::tr("Last start stopped at: %s (reset: %s)")); snprintf(s.bootNote, sizeof s.bootNote, cfg.lang ? "Last start stopped at: %s (reset: %s)" : "\xE0\xB8\x84\xE0\xB8\xA3\xE0\xB8\xB1\xE0\xB9\x89\xE0\xB8\x87\xE0\xB8\x81\xE0\xB9\x88\xE0\xB8\xAD\xE0\xB8\x99\xE0\xB8\x84\xE0\xB9\x89\xE0\xB8\xB2\xE0\xB8\x87\xE0\xB8\x97\xE0\xB8\xB5\xE0\xB9\x88: %s (\xE0\xB8\xA3\xE0\xB8\xB5\xE0\xB9\x80\xE0\xB8\x8B\xE0\xB9\x87\xE0\xB8\x95: %s)", "wifi hotspot on", "crash");
+    strcpy(s.bootWhy, "assert failed: sdio_host_init sdio_wrapper.c:214 (ret == ESP_OK && \"sdmmc host\")");
+    strcpy(s.bootWhere, "task main pc 4801a2c4 ra 4800f1b0 cause 2 addr 00000000");
+    shot("00b_boot_crash_note");
+    s.bootNote[0] = s.bootWhy[0] = s.bootWhere[0] = 0;
+  }
   {  // ---- smart BMS over Bluetooth
     live(0); s.cloudCfg = true; s.cloudOk = true;
     BmsUi &b = s.bms;

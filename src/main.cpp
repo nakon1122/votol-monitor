@@ -22,6 +22,7 @@
 #include "cloud.h"
 #include "blesetup.h"
 #include "bmslink.h"
+#include "crashinfo.h"
 
 static UiState S;
 static Settings cfg;
@@ -1209,6 +1210,7 @@ RTC_NOINIT_ATTR static uint32_t rtcMagic;
 RTC_NOINIT_ATTR static char rtcStage[28];
 static const uint32_t RTC_MAGIC = 0x564F5431;
 static void stage(const char *s) { strlcpy(rtcStage, s, sizeof rtcStage); rtcMagic = RTC_MAGIC; }
+void net::bootStage(const char *s) { stage(s); Serial.printf("[boot %6lu ms] %s\n", (unsigned long)millis(), s); }
 static void bootLog(const char *step) {
   stage(step);
   Serial.printf("[boot %6lu ms] %-18s heap %u KB, psram %u KB\n", (unsigned long)millis(), step,
@@ -1234,7 +1236,15 @@ void setup() {
       snprintf(S.bootNote, sizeof S.bootNote, T("Last start stopped at: %s (reset: %s)"), prevStage, rs);
     else if (prevOk && (why == 4 || why == 5 || why == 6 || why == 7 || why == 9))
       snprintf(S.bootNote, sizeof S.bootNote, T("Last run stopped: %s (%s)"), rs, prevStage);
+    if (crashInfo(S.bootWhy, sizeof S.bootWhy, S.bootWhere, sizeof S.bootWhere))
+      Serial.printf("[boot] crash: %s | %s\n", S.bootWhy, S.bootWhere);
     if (S.bootNote[0]) Serial.printf("[boot] %s\n", S.bootNote);
+    // the Wi-Fi start crashed last time: leave the Wi-Fi chip alone this start so the screen works
+    bool crashed = why == 4 || why == 5 || why == 6 || why == 7;
+    if (prevOk && crashed && (!strcmp(prevStage, "web") || !strncmp(prevStage, "wifi", 4))) {
+      net::disable();
+      Serial.println("[boot] Wi-Fi safe mode for this start");
+    }
   }
   displayBegin();
   bootLog("display");
@@ -1246,7 +1256,7 @@ void setup() {
   displayCalibrate(false);
   displayFlush(true);
   bootLog("boot screen shown");
-  if (S.bootNote[0]) delay(5000);  // time to read / photograph it
+  if (S.bootNote[0] || S.bootWhy[0] || S.bootWhere[0]) delay(12000);  // time to read / photograph it
   S.sd = logger::begin();
   bootLog("storage");
   newTrip(true);

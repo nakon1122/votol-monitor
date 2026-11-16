@@ -149,6 +149,7 @@ void begin(ApiFn api, TimeFn time) {
 // Hotspot on/off. The internet Wi-Fi (net.cpp) runs at the same time; the
 // web page is then also reachable from the home network.
 void enable(bool en) {
+  if (net::isDisabled()) return;  // safe mode: no network stack this start
   if (en == on && srvStarted) return;
   on = en;
   net::hotspot(en);  // net.cpp keeps hotspot + internet Wi-Fi working together

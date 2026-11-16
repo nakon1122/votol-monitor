@@ -1181,11 +1181,24 @@ static void bootPage(Gfx &g, const UiState &s) {
   bolt(g, 196, 70, 4.2f, YELLOW);
   g.text(240, 200, "VOTOL", F38B, TEXT, AL_C);
   g.text(240, 224, "MONITOR", F13B, MUTED2, AL_C);
-  g.text(240, 268, "Connecting to VOTOL controller...", F13, SUB, AL_C);
-  g.text(240, 300, s.fw, F10, MUTED, AL_C);
-  if (s.bootNote[0]) {  // the previous start stopped half-way: say where (photo for the developer)
-    g.fillRoundRect(20, 236, 440, 22, 6, 0x2A2008);
-    g.textMid(240, 247, s.bootNote, F11, YELLOW, AL_C);
+  g.text(240, 306, s.fw, F10, MUTED, AL_C);
+  if (!s.bootNote[0] && !s.bootWhy[0] && !s.bootWhere[0]) {
+    g.text(240, 268, "Connecting to VOTOL controller...", F13, SUB, AL_C);
+    return;
+  }
+  // the previous start stopped half-way: say where and why (a photo is enough for the developer)
+  char l[4][64] = {"", "", "", ""};
+  snprintf(l[0], sizeof l[0], "%s", s.bootNote);
+  int n = (int)strlen(s.bootWhy);
+  snprintf(l[1], sizeof l[1], "%.60s", s.bootWhy);
+  if (n > 60) snprintf(l[2], sizeof l[2], "%.60s", s.bootWhy + 60);
+  snprintf(l[n > 60 ? 3 : 2], sizeof l[0], "%.63s", s.bootWhere);
+  int y = 229;
+  for (int i = 0; i < 4; i++) {
+    if (!l[i][0]) continue;
+    g.fillRoundRect(8, y, 464, 15, 4, 0x2A2008);
+    g.textMid(240, y + 8, l[i], F10, i ? TEXT : YELLOW, AL_C);
+    y += 16;
   }
 }
 
