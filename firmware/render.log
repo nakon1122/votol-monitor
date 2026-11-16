@@ -1,0 +1,35 @@
+/home/runner/work/votol-monitor/votol-monitor/src/ui.cpp: In function ‘void ui::bootPage(Gfx&, const UiState&)’:
+/home/runner/work/votol-monitor/votol-monitor/src/ui.cpp:1191:32: warning: ‘%s’ directive output may be truncated writing up to 159 bytes into a region of size 64 [-Wformat-truncation=]
+ 1191 |   snprintf(l[0], sizeof l[0], "%s", s.bootNote);
+      |                                ^~
+In file included from /usr/include/stdio.h:974,
+                 from /home/runner/work/votol-monitor/votol-monitor/include/votol_proto.h:15,
+                 from /home/runner/work/votol-monitor/votol-monitor/include/ui.h:7,
+                 from /home/runner/work/votol-monitor/votol-monitor/src/ui.cpp:3:
+In function ‘int snprintf(char*, size_t, const char*, ...)’,
+    inlined from ‘void ui::bootPage(Gfx&, const UiState&)’ at /home/runner/work/votol-monitor/votol-monitor/src/ui.cpp:1191:11:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:68:35: note: ‘__builtin_snprintf’ output between 1 and 160 bytes into a destination of size 64
+   68 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   69 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   70 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+/home/runner/work/votol-monitor/votol-monitor/src/ui.cpp: In function ‘void ui::bootPage(Gfx&, const UiState&)’:
+/home/runner/work/votol-monitor/votol-monitor/src/ui.cpp:1191:32: warning: ‘%s’ directive output may be truncated writing up to 159 bytes into a region of size 64 [-Wformat-truncation=]
+ 1191 |   snprintf(l[0], sizeof l[0], "%s", s.bootNote);
+      |                                ^~
+In file included from /usr/include/stdio.h:974,
+                 from /home/runner/work/votol-monitor/votol-monitor/include/votol_proto.h:15,
+                 from /home/runner/work/votol-monitor/votol-monitor/include/ui.h:7,
+                 from /home/runner/work/votol-monitor/votol-monitor/src/ui.cpp:3:
+In function ‘int snprintf(char*, size_t, const char*, ...)’,
+    inlined from ‘void ui::bootPage(Gfx&, const UiState&)’ at /home/runner/work/votol-monitor/votol-monitor/src/ui.cpp:1191:11:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:68:35: note: ‘__builtin_snprintf’ output between 1 and 160 bytes into a destination of size 64
+   68 |   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   69 |                                    __glibc_objsize (__s), __fmt,
+      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   70 |                                    __va_arg_pack ());
+      |                                    ~~~~~~~~~~~~~~~~~
+162 screens -> /home/runner/work/votol-monitor/votol-monitor/assets/screens (+ S3 4.0")

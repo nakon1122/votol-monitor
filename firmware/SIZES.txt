@@ -1,0 +1,6 @@
+RAM:   [===       ]  30.0% (used 98364 bytes from 327680 bytes)
+Flash: [======    ]  57.7% (used 2192805 bytes from 3801088 bytes)
+RAM:   [===       ]  34.2% (used 112112 bytes from 327680 bytes)
+Flash: [=======   ]  71.6% (used 1501969 bytes from 2097152 bytes)
+RAM:   [===       ]  35.0% (used 114584 bytes from 327680 bytes)
+Flash: [=====     ]  50.4% (used 2112221 bytes from 4194304 bytes)
